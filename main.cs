@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Web.Script.Serialization;
 using System.Diagnostics;
@@ -352,6 +353,38 @@ namespace EasyWorkshop
             iconLabel.Top = 52;
             iconLabel.Left = 615;
 
+            Color[] availableColors = { Color.FromArgb(103, 58, 183), Color.FromArgb(76, 175, 80), Color.FromArgb(121, 85, 72), Color.FromArgb(244, 67, 54) };
+            int iconId = 1;
+            StylishButton iconGenerate = new StylishButton();
+            iconGenerate.Text = "Generate";
+            iconGenerate.Parent = mainPanel;
+            iconGenerate.SetBounds(660, 45, 100, 30);
+            iconGenerate.TextFont = new Font("Arial", 12);
+            iconGenerate.Background = Color.FromArgb(63, 81, 181);
+            iconGenerate.SideGround = Color.FromArgb(54, 70, 156);
+            iconGenerate.TextColor = Color.White;
+            iconGenerate.Click += (sender, e) =>
+            {
+                Bitmap img = new Bitmap(512, 512);
+                Graphics grp = Graphics.FromImage(img);
+                Random rnd = new Random();
+                StringFormat format = new StringFormat();
+
+                int clr = rnd.Next(0, availableColors.Length);
+                grp.Clear(availableColors[clr]);
+                format.Alignment = StringAlignment.Center;
+                grp.DrawString(title.Text, new Font("Arial", 48), Brushes.White, 256, 256-48, format);
+                grp.Dispose();
+
+                img.Save($"{fileSelection.SelectedPath}/package_icon_{iconId}.jpg", ImageFormat.Jpeg );
+                img.Dispose();
+
+                iconPreview.Image = Image.FromFile($"{fileSelection.SelectedPath}/package_icon_{iconId}.jpg");
+                Console.WriteLine("Icon generated in selected folder using specified title!");
+
+                iconId++;
+            };
+
             StylishButton iconFile = new StylishButton();
             iconFile.Text = "Select";
             iconFile.Parent = mainPanel;
@@ -371,6 +404,7 @@ namespace EasyWorkshop
                     Console.WriteLine("ERROR:\tImage has to be no bigger and no smaller than 512x512!");
                 }
             };
+
             iconSelection.Filter = "(*.JPG)|*.JPG;";
             iconFile.Click += (sender, e) =>
             {
@@ -441,7 +475,7 @@ namespace EasyWorkshop
             Label aboutPage = new Label();
             aboutPage.TextAlign = ContentAlignment.MiddleCenter;
             aboutPage.Font = new Font("Arial", 10);
-            aboutPage.Text = "Easy Workshop version 0.1";
+            aboutPage.Text = "Easy Workshop version 0.2";
             aboutPage.Parent = mainPanel;
             aboutPage.SetBounds(1800, 300, 600, 20);
 
