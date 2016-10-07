@@ -18,7 +18,7 @@ namespace EasyWorkshop
         public string title;
         public string type;
         public string[] tags;
-        public string[] ignore = { "*.gma" };
+        public string[] ignore = { "*.gma", "*.jpg" };
     }
 
     class WorkshopPackage
@@ -353,37 +353,6 @@ namespace EasyWorkshop
             iconLabel.Top = 52;
             iconLabel.Left = 615;
 
-            Color[] availableColors = { Color.FromArgb(103, 58, 183), Color.FromArgb(76, 175, 80), Color.FromArgb(121, 85, 72), Color.FromArgb(244, 67, 54) };
-            int iconId = 1;
-            StylishButton iconGenerate = new StylishButton();
-            iconGenerate.Text = "Generate";
-            iconGenerate.Parent = mainPanel;
-            iconGenerate.SetBounds(660, 45, 100, 30);
-            iconGenerate.TextFont = new Font("Arial", 12);
-            iconGenerate.Background = Color.FromArgb(63, 81, 181);
-            iconGenerate.SideGround = Color.FromArgb(54, 70, 156);
-            iconGenerate.TextColor = Color.White;
-            iconGenerate.Click += (sender, e) =>
-            {
-                Bitmap img = new Bitmap(512, 512);
-                Graphics grp = Graphics.FromImage(img);
-                Random rnd = new Random();
-                StringFormat format = new StringFormat();
-
-                int clr = rnd.Next(0, availableColors.Length);
-                grp.Clear(availableColors[clr]);
-                format.Alignment = StringAlignment.Center;
-                grp.DrawString(title.Text, new Font("Arial", 48), Brushes.White, 256, 256-48, format);
-                grp.Dispose();
-
-                img.Save($"{fileSelection.SelectedPath}/package_icon_{iconId}.jpg", ImageFormat.Jpeg );
-                img.Dispose();
-
-                iconPreview.Image = Image.FromFile($"{fileSelection.SelectedPath}/package_icon_{iconId}.jpg");
-                Console.WriteLine("Icon generated in selected folder using specified title!");
-
-                iconId++;
-            };
 
             StylishButton iconFile = new StylishButton();
             iconFile.Text = "Select";
@@ -409,6 +378,40 @@ namespace EasyWorkshop
             iconFile.Click += (sender, e) =>
             {
                 iconSelection.ShowDialog();
+            };
+
+            Color[] availableColors = { Color.FromArgb(103, 58, 183), Color.FromArgb(76, 175, 80), Color.FromArgb(121, 85, 72), Color.FromArgb(244, 67, 54) };
+            int iconId = 0;
+            StylishButton iconGenerate = new StylishButton();
+            iconGenerate.Text = "Generate";
+            iconGenerate.Parent = mainPanel;
+            iconGenerate.SetBounds(660, 45, 100, 30);
+            iconGenerate.TextFont = new Font("Arial", 12);
+            iconGenerate.Background = Color.FromArgb(63, 81, 181);
+            iconGenerate.SideGround = Color.FromArgb(54, 70, 156);
+            iconGenerate.TextColor = Color.White;
+            iconGenerate.Click += (sender, e) =>
+            {
+                iconId++;
+
+                Bitmap img = new Bitmap(512, 512);
+                Graphics grp = Graphics.FromImage(img);
+                Random rnd = new Random();
+                StringFormat format = new StringFormat();
+
+                int clr = rnd.Next(0, availableColors.Length);
+                grp.Clear(availableColors[clr]);
+                format.Alignment = StringAlignment.Center;
+                grp.DrawString(title.Text, new Font("Arial", 48), Brushes.White, 256, 256-48, format);
+                grp.Dispose();
+
+                img.Save($"{fileSelection.SelectedPath}/package_icon_{iconId}.jpg", ImageFormat.Jpeg );
+                img.Dispose();
+
+                iconPreview.Image = Image.FromFile($"{fileSelection.SelectedPath}/package_icon_{iconId}.jpg");
+                iconSelection.FileName = $"{fileSelection.SelectedPath}/package_icon_{iconId}.jpg";
+
+                Console.WriteLine("Icon generated in selected folder using specified title!");
             };
 
             //Finalize, run checks for validation first :P
